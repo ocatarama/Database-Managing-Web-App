@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>BD | Sterge dintr-o tabela</title>
+        <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+        <style>
+            :root {
+                --color-charcoal:#122620;
+                --color-cream: #F4EBD0;
+                --color-tan: #B68D40;
+                --color-gold: #D6AD60;
+            }
+
+            html, body {
+                margin: 0;
+                padding: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: var(--color-charcoal);
+                color: var(--color-gold);
+                /* font-family: Helvetica, "Trebuchet MS", Verdana, sans-serif; */
+                font-family: 'Courier New', monospace;
+                overflow: hidden;
+                display: flex;
+            }
+            
+            .left {
+                flex: 1;
+                width: max-content;
+                height: 100%;
+                border-right: 3px solid var(--color-gold);
+            }
+
+            .left .credits {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                margin-bottom: 10px;
+            }
+            
+            .left .credits p{
+                margin: 0;
+                padding: 0;
+                width: 290px;
+            }
+            
+            .right {
+                flex: 4;
+                overflow-y: scroll;
+            }
+
+            .title {
+                color: var(--color-gold);
+                width: 40vw;
+                margin: 0 auto;
+                text-align: center;
+                font-size: 35px;
+                padding-top:50px;
+            }
+
+            .subtitle {
+                color: var(--color-tan);
+                width: 30vw;
+                margin: 0 auto;
+                text-align: center;
+                font-size: 24px;
+                padding-top: 30px;
+                padding-bottom: 50px;
+            }
+
+            .menu {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .menu .menu-btn {
+                background-color: transparent;
+                border: none;
+                border-bottom: 2px solid var(--color-gold);
+                color: var(--color-gold);
+                width: 100%;
+                padding: 10px 0;
+                font-weight: bold;
+                font-family: 'Courier New', monospace;
+            }
+
+            .menu .menu-btn:hover {
+                cursor: pointer;
+                background-color: var(--color-gold);
+                color: var(--color-charcoal);
+            }
+
+            .form-container {
+                display: none;
+            }
+
+            .form-group {
+                display: flex;
+                justify-content: left;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+
+            form {
+                padding-left:25%;
+            }
+
+            select {
+                margin: 10px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="left">
+            <div class="menu">
+                <a href="{{ rootPath }}"><button class="menu-btn">Inapoi la masa de lucru</button></a>
+                <a href="{{ rootPath + '/add' }}"><button class="menu-btn">Adauga intr-o tabela</button></a>
+                <a href="{{ rootPath + '/delete' }}"><button class="menu-btn">Sterge dintr-o tabela</button></a>
+                <a href="{{ rootPath + '/modify' }}"><button class="menu-btn">Modifica o tabela</button></a>
+            </div>
+            <div class="credits">
+                <p><b>Student:</b> Ovidiu CĂTĂRAMĂ</p>
+                <p><b>Grupa:</b> 1306A</p>
+                <p><b>Profesor:</b> Cătălin MIRONEANU</p>
+                <p><b>@Facultatea de Automatică şi Calculatoare Iaşi</b></p>
+            </div>
+        </div>
+
+        <div class="right">
+            <h2 class="title">Baza de date a unei asociatii de voluntariat</h2>
+            <h4 class="subtitle">Sterge o intregistrare</h4>
+            <div class="container">
+                <form method="POST" action="/delete" id="myForm">
+                    <div class="form-group">
+                        <lable for="selectTable">Alege tabela: </lable>
+                        <select name="selectTable" id="selectTable">
+                            <option value="0">Alege o tabela</option>
+                            <option value="1">Voluntari</option>
+                            <option value="2">Voluntari Alumni</option>
+                            <option value="3">Departamente</option>
+                            <option value="4">Roluri</option>
+                            <option value="5">Evenimente</option>
+                            <option value="6">Parteneri</option>
+                        </select>
+                    </div>
+
+                    <div class="form-container voluntari">
+                        <label for="vol.nume">Alege inregistrarea pe care doresti sa o stergi (dupa nume voluntar): </label><br>
+                        <select name="vol.nume" id="vol.nume">
+                            <option value="0">Alege o inregistrare:</option>
+                            {% for vol in voluntari %}
+                                <option value='{{ vol["id_voluntar"] }}'>{{ vol["nume"] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-container alumni">
+                        <label for="al.nume">Alege inregistrarea pe care doresti sa o stergi (dupa nume alumni): </label><br>
+                        <select name="al.nume" id="al.nume">
+                            <option value="0">Alege o inregistrare:</option>
+                            {% for vol in voluntariAlumni %}
+                                <option value='{{ vol["id_voluntar"] }}'>{{ vol["nume"] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-container departamente">
+                        <label for="dep.nume">Alege inregistrarea pe care doresti sa o stergi (dupa nume departament): </label><br>
+                        <select name="dep.nume" id="vol.dep">
+                            <option value="0">Alege o inregistrare:</option>
+                            {% for dep in departamente %}
+                                <option value='{{ dep["id_departament"] }}'>{{ dep["nume_departament"] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-container roluri">
+                        <label for="rol.nume">Alege inregistrarea pe care doresti sa o stergi (dupa nume rol): </label><br>
+                        <select name="rol.nume" id="rol.nume">
+                            <option value="0">Alege o inregistrare:</option>
+                            {% for rol in roluri %}
+                                <option value='{{ rol["id_rol"] }}'>{{ rol["denumire_rol"] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-container evenimente">
+                        <label for="ev.nume">Alege inregistrarea pe care doresti sa o stergi (dupa nume event): </label><br>
+                        <select name="ev.nume" id="ev.nume">
+                            <option value="0">Alege o inregistrare:</option>
+                            {% for event in evenimente %}
+                                <option value='{{ event["id_event"] }}'>{{ event["nume_event"] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-container parteneri">
+                        <label for="p.nume">Alege inregistrarea pe care doresti sa o stergi (dupa nume parteneri): </label><br>
+                        <select name="p.nume" id="p.nume">
+                            <option value="0">Alege o inregistrare:</option>
+                            {% for p in parteneri %}
+                                <option value='{{ p["id_partener"] }}'>{{ p["nume_partener"] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit" id="submit">Sterge</button>
+                </form>
+            </div>
+        </div>
+        <script>
+            var x = document.getElementById("selectTable");
+
+            x.addEventListener("change", () => {
+                var forms = document.getElementsByClassName("form-container");
+
+                Array.from(forms).forEach(element => {element.style.display = "none"});
+
+                if(x.value != 0)
+                    forms[x.value-1].style.display = "block";
+            });
+        </script>
+    </body>
+</html>

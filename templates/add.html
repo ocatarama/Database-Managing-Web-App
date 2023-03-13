@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>BD | Adauga intr-o tabela</title>
+        <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+        <style>
+            :root {
+                --color-charcoal:#122620;
+                --color-cream: #F4EBD0;
+                --color-tan: #B68D40;
+                --color-gold: #D6AD60;
+            }
+
+            html, body {
+                margin: 0;
+                padding: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: var(--color-charcoal);
+                color: var(--color-gold);
+                /* font-family: Helvetica, "Trebuchet MS", Verdana, sans-serif; */
+                font-family: 'Courier New', monospace;
+                overflow: hidden;
+                display: flex;
+            }
+            
+            .left {
+                flex: 1;
+                width: max-content;
+                height: 100%;
+                border-right: 3px solid var(--color-gold);
+            }
+
+            .left .credits {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                margin-bottom: 10px;
+            }
+            
+            .left .credits p{
+                margin: 0;
+                padding: 0;
+                width: 290px;
+            }
+            
+            .right {
+                flex: 4;
+                overflow-y: scroll;
+            }
+
+            .title {
+                color: var(--color-gold);
+                width: 40vw;
+                margin: 0 auto;
+                text-align: center;
+                font-size: 35px;
+                padding-top:50px;
+            }
+
+            .subtitle {
+                color: var(--color-tan);
+                width: 30vw;
+                margin: 0 auto;
+                text-align: center;
+                font-size: 24px;
+                padding-top: 30px;
+                padding-bottom: 50px;
+            }
+
+            .menu {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .menu .menu-btn {
+                background-color: transparent;
+                border: none;
+                border-bottom: 2px solid var(--color-gold);
+                color: var(--color-gold);
+                width: 100%;
+                padding: 10px 0;
+                font-weight: bold;
+                font-family: 'Courier New', monospace;
+            }
+
+            .menu .menu-btn:hover {
+                cursor: pointer;
+                background-color: var(--color-gold);
+                color: var(--color-charcoal);
+            }
+
+            .form-container {
+                display: none;
+            }
+
+            .form-group {
+                display: flex;
+                justify-content: left;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+
+            form {
+                padding-left:25%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="left">
+            <div class="menu">
+                <a href="{{ rootPath }}"><button class="menu-btn">Inapoi la masa de lucru</button></a>
+                <a href="{{ rootPath + '/add' }}"><button class="menu-btn">Adauga intr-o tabela</button></a>
+                <a href="{{ rootPath + '/delete' }}"><button class="menu-btn">Sterge dintr-o tabela</button></a>
+                <a href="{{ rootPath + '/modify' }}"><button class="menu-btn">Modifica o tabela</button></a>
+            </div>
+            <div class="credits">
+                <p><b>Student:</b> Ovidiu CĂTĂRAMĂ</p>
+                <p><b>Grupa:</b> 1306A</p>
+                <p><b>Profesor:</b> Cătălin MIRONEANU</p>
+                <p><b>@Facultatea de Automatică şi Calculatoare Iaşi</b></p>
+            </div>
+        </div>
+
+        <div class="right">
+            <h2 class="title">Baza de date a unei asociatii de voluntariat</h2>
+            <h4 class="subtitle">Adauga o intregistrare intr-o tabela</h4>
+            <div class="container">
+                <form method="POST" action="/add">
+                    <div class="form-group">
+                        <lable for="selectTable">Alege tabela in care vrei sa adaugi:</lable>
+                        <select name="selectTable" id="selectTable">
+                            <option value="0">Alege o tabela</option>
+                            <option value="1">Voluntari</option>
+                            <option value="2">Departamente</option>
+                            <option value="3">Roluri</option>
+                            <option value="4">Evenimente</option>
+                            <option value="5">Parteneri</option>
+                        </select>
+                    </div>
+
+                    <div class="form-container voluntari">
+                        <div class="form-group">
+                            <label for="vol.nume">Nume: </label>
+                            <input name="vol.nume" type="text" class="form-input" id="vol.nume" placeholder="ex. Ioan Popescu">
+                        </div>
+                        <div class="form-group">
+                            <label for="vol.aderare">Data aderare: </label>
+                            <input name="vol.aderare" type="text" class="form-input" id="vol.aderare" placeholder="ex. 01-JAN-2000">
+                        </div>
+                        <div class="form-group">
+                            <label for="vol.rol">Rol: </label>
+                            <select name="vol.rol" id="vol.rol">
+                                <option value="0">Alege rolul</option>
+                                {% for rol in roluri %}
+                                    {%if (rol["denumire_rol"] != "Voluntar Alumni")%} 
+                                        <option value='{{ rol["id_rol"] }}'> {{rol["denumire_rol"] }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="vol.dep">Departament: </label>
+                            <select name="vol.dep" id="vol.dep">
+                                <option value="0">Alege departamentul</option>
+                                {% for dep in departamente %}
+                                    <option value='{{ dep["id_departament"] }}'> {{ dep["nume_departament"] }}</option>
+                                {% endfor %}    
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="vol.telefon">Numar telefon: </label>
+                            <input name="vol.telefon" type="text" class="form-input" id="vol.telefon" placeholder="can start with +40">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="vol.email">Email: </label>
+                            <input name="vol.email" type="email" class="form-input" id="vol.email" placeholder="ex. ioan@popescu.ro">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="vol.nastere">Data nasterii: </label>
+                            <input name="vol.nastere" type="text" class="form-input"id="vol.nastere" placeholder="ex. 01-JAN-2000">
+                        </div>
+                    </div>
+
+                    <div class="form-container departamente">
+                        <div class="form-group">
+                            <label for="dep.nume">Numele departamentului: </label>
+                            <input name="dep.nume" type="text" class="form-input" id="dep.nume">
+                        </div>
+                    </div>
+
+                    <div class="form-container roluri">
+                        <div class="form-group">
+                            <label for="rol.nume">Denumirea rolului: </label>
+                            <input name="rol.nume" type="text" class="form-input" id="rol.nume">
+                        </div>
+                    </div>
+
+                    <div class="form-container evenimente">
+                        <div class="form-group">
+                            <label for="ev.nume">Denumirea evenimentului: </label>
+                            <input name="ev.nume" type="text" class="form-input" id="ev.nume">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ev.start">Data start: </label>
+                            <input name="ev.start" type="text" class="form-input" id="ev.start" placeholder="ex. 01-JAN-2000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ev.stop">Data stop: </label>
+                            <input name="ev.stop" type="text" class="form-input" id="ev.stop" placeholder="ex. 01-JAN-2000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ev.locatie">Locatia evenimentului: </label>
+                            <input name="ev.locatie" type="text" class="form-input" id="ev.locatie">
+                        </div>
+                    </div>
+
+                    <div class="form-container parteneri">
+                        <div class="form-group">
+                            <label for="p.nume">Denumirea partenerului: </label>
+                            <input name="p.nume" type="text" class="form-input" id="p.nume">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="p.ev">Evenimentul sponsorizat: </label>
+                            <select name="p.ev" id="p.ev">
+                                <option value="0">Alege evenimentul</option>
+                                {% for event in evenimente %}
+                                    <option value='{{event["id_event"] }}'> {{ event["nume_event"] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="p.bani">Valoarea sponsorizarii: </label>
+                            <input name="p.bani" type="text" class="form-input" id="p.bani">
+                        </div>
+                    </div>
+
+                    <button type="submit">Adauga</button>
+                </form>
+            </div>
+        </div>
+        <script>
+            var x = document.getElementById("selectTable");
+
+            x.addEventListener("change", () => {
+                var forms = document.getElementsByClassName("form-container");
+
+                Array.from(forms).forEach(element => {element.style.display = "none"});
+
+                if(x.value != 0)
+                    forms[x.value-1].style.display = "block";
+            });
+        </script>
+    </body>
+</html>

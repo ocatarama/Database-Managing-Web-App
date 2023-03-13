@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>BD | Ovidiu Cătăramă</title>
+        <style>
+            :root {
+                --color-charcoal:#122620;
+                --color-cream: #F4EBD0;
+                --color-tan: #B68D40;
+                --color-gold: #D6AD60;
+            }
+
+            html, body {
+                margin: 0;
+                padding: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: var(--color-charcoal);
+                color: var(--color-gold);
+                /* font-family: Helvetica, "Trebuchet MS", Verdana, sans-serif; */
+                font-family: 'Courier New', monospace;
+                overflow: hidden;
+                display: flex;
+            }
+            
+            .left {
+                flex: 1;
+                width: max-content;
+                height: 100%;
+                border-right: 3px solid var(--color-gold);
+            }
+
+            .left .credits {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                margin-bottom: 10px;
+            }
+            
+            .left .credits p{
+                margin: 0;
+                padding: 0;
+                width: 290px;
+            }
+            
+            .right {
+                flex: 4;
+                overflow-y: scroll;
+            }
+
+            .container {
+                width: 70vw;
+                margin: 0 auto;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            table, tr, td {
+                border: 1px solid var(--color-tan);; 
+            }
+
+            td{
+                padding: 5px;
+            }
+            
+            tr:nth-child(1) {
+                text-align: center;
+                font-weight: bold;
+            }
+
+            table {
+                border-collapse: collapse;
+            }
+
+            .tabel {
+                display: none;
+            }
+
+            .title {
+                color: var(--color-gold);
+                width: 40vw;
+                margin: 0 auto;
+                text-align: center;
+                font-size: 35px;
+                padding: 50px 0;
+            }
+
+            .table-title {
+                text-align: center;
+                margin-top: 0;
+            }
+
+            .menu {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .menu .menu-btn {
+                background-color: transparent;
+                border: none;
+                border-bottom: 2px solid var(--color-gold);
+                color: var(--color-gold);
+                width: 100%;
+                padding: 10px 0;
+                font-weight: bold;
+                font-family: 'Courier New', monospace;
+            }
+
+            .menu .menu-btn:hover {
+                cursor: pointer;
+                background-color: var(--color-gold);
+                color: var(--color-charcoal);
+            }
+
+            .show-details {
+                background-color: transparent;
+                border: 2px solid var(--color-gold);
+                color: var(--color-gold);
+                padding: 10px 20px;
+                font-weight: bold;
+                font-family: 'Courier New', monospace; 
+                margin-top: 20px;
+                margin-bottom: 20px;
+                margin-left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .show-details:hover {
+                cursor: pointer;
+                background-color: var(--color-gold);
+                color: var(--color-charcoal);
+            }
+
+            .temp, .temp2 {
+                display: none;
+            }
+
+            .dividing-text {
+                width: 100%;
+                text-align: center;
+                margin-top: 30px;
+            }
+
+            .dividing-text:first-of-type {
+                margin-top: 10px;
+            }
+
+            .alumn {
+                margin-left: 50%;
+                margin-bottom: 50px;
+                transform: translateX(-50%);
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+            }
+
+            .alumn form {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+            }
+
+            .alumn form select {
+                margin-top: 5px;
+            }
+
+            .alumn form button {
+                margin: 0;
+                margin-top: 10px;
+                transform: translateX(0);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="left">
+            <div class="menu">
+                <p class="dividing-text">Tabele:</p>
+                <button class="menu-btn" style="border-top: 2px solid #D6AD60;" onclick="onVoluntari()">Tabela Voluntari</button>
+                <button class="menu-btn" onclick="onAlumni()">Tabela Voluntari Alumni</button>
+                <button class="menu-btn" onclick="onDept()">Tabela Departamente</button>
+                <button class="menu-btn" onclick="onRoluri()">Tabela Roluri</button>
+                <button class="menu-btn" onclick="onEvent()">Tabela Evenimente</button>
+                <button class="menu-btn" onclick="onParteneri()">Tabela Parteneri</button>
+                <button class="menu-btn" style="color: red;" onclick="clearBench()">Sterge masa de lucru</button>
+                <p class="dividing-text">Actiuni:</p>
+                <a href="{{ rootPath + '/add' }}" style="border-top: 2px solid #D6AD60;"><button class="menu-btn">Adauga intr-o tabela</button></a>
+                <a href="{{ rootPath + '/delete' }}"><button class="menu-btn">Sterge dintr-o tabela</button></a>
+                <a href="{{ rootPath + '/modify' }}"><button class="menu-btn">Modifica o tabela</button></a>
+
+            </div>
+            <div class="credits">
+                <p><b>Student:</b> Ovidiu CĂTĂRAMĂ</p>
+                <p><b>Grupa:</b> 1306A</p>
+                <p><b>Profesor:</b> Cătălin MIRONEANU</p>
+                <p><b>@Facultatea de Automatică şi Calculatoare Iaşi</b></p>
+            </div>
+        </div>
+        <div class="right">
+            <h2 class="title">Baza de date a unei asociatii de voluntariat</h2>
+            <div class="container">
+                <div class="tabel voluntari">
+                    <h3 class="table-title">Tabela Voluntari</h3>
+                    <table>
+                        <tr>
+                            <td>id_voluntar</td>
+                            <td>nume</td>
+                            <td>data_aderare</td>
+                            <td>id_rol</td>
+                            <td>id_departament</td>
+                            <td class="temp">numar_telefon</td>
+                            <td class="temp">email</td>
+                            <td class="temp">data_nastere</td>
+                        </tr>
+                        {% for voluntar in voluntari %}
+                        <tr>
+                            <td>{{ voluntar["id_voluntar"] }}</td>
+                            <td>{{ voluntar["nume"] }}</td>
+                            <td>{{ voluntar["data_aderare"] }}</td> 
+                            <td>{{ voluntar["id_rol"] }}</td>
+                            <td>{{ voluntar["id_departament"] }}</td>
+                            <td class="temp">{{ detalii[loop.index-1]["numar_telefon"] }}</td>
+                            <td class="temp">{{ detalii[loop.index-1]["email"] }}</td>
+                            <td class="temp">{{ detalii[loop.index-1]["data_nastere"] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+
+                    <button class="show-details" onclick="onDetalii()">ARATA DETALIILE VOLUNTARILOR</button>
+
+                    <div class="alumn">
+                        Alumnizează un voluntar:
+                        <form method="POST" action="/">
+                            <select name="selectVol" id="selectVol">
+                                <option value="0">Alege un voluntar: </option>
+                                {% for vol in voluntari %}
+                                    <option value="{{ vol['id_voluntar'] }}">{{ vol['nume'] }}</option>
+                                {% endfor %}
+                            </select>
+
+                            <button type="submit" class="show-details">Alumnizare</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="tabel alumni">
+                    <h3 class="table-title">Tabela Voluntari Alumni</h3>
+                    <table>
+                        <tr>
+                            <td>id_voluntar</td>
+                            <td>nume</td>
+                            <td>data_aderare</td>
+                            <td>data_alumnizare</td>
+                            <td>id_rol</td>
+                            <td>numar_telefon</td>
+                            <td>email</td>
+                            <td>data_nasterii</td>
+                        </tr>
+                        {% for voluntar in voluntariAlumni %}
+                        <tr>
+                            <td>{{ voluntar["id_voluntar"] }}</td>
+                            <td>{{ voluntar["nume"] }}</td>
+                            <td>{{ voluntar["data_aderare"] }}</td>
+                            <td>{{ voluntar["data_alumnizare"] }}</td>
+                            <td>{{ voluntar["id_rol"] }}</td>
+                            <td>{{ voluntar["numar_telefon"] }}</td>
+                            <td>{{ voluntar["email"] }}</td>
+                            <td>{{ voluntar["data_nastere"] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+
+                <div class="tabel departamente">
+                    <h3 class="table-title">Tabela Departamente</h3>
+                    <table>
+                        <tr>
+                            <td>id_departament</td>
+                            <td>nume_departament</td>
+                        </tr>
+                        {% for dept in departamente %}
+                        <tr>
+                            <td>{{ dept["id_departament"] }}</td>
+                            <td>{{ dept["nume_departament"] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+
+                <div class="tabel roluri">
+                    <h3 class="table-title">Tabela Roluri</h3>
+                    <table>
+                        <tr>
+                            <td>id_rol</td>
+                            <td>denumire_rol</td>
+                        </tr>
+                        {% for rol in roluri %}
+                        <tr>
+                            <td>{{ rol["id_rol"] }}</td>
+                            <td>{{ rol["denumire_rol"] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+
+                <div class="tabel evenimente">
+                    <h3 class="table-title">Tabela Evenimente</h3>
+                    <table>
+                        <tr>
+                            <td>id_event</td>
+                            <td>nume_event</td>
+                            <td>data_start</td>
+                            <td>data_stop</td>
+                            <td>locatie</td>
+                            <td>buget</td>
+                            <td class="temp2">sponsori</td>
+                        </tr>
+                        {% for event in evenimente %}
+                        <tr>
+                            <td>{{ event["id_event"] }}</td>
+                            <td>{{ event["nume_event"] }}</td>
+                            <td>{{ event["data_start"] }}</td>
+                            <td>{{ event["data_stop"] }}</td>
+                            <td>{{ event["locatie"] }}</td>
+                            <td>{{ event["buget"] }}</td>
+                            <td class="temp2">
+                                {% for aux in sponsori[event["id_event"]] %}
+                                    {{ aux + ", " }}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+
+                    <button class="show-details" onclick="onSponsori()">ARATA SPONSORII EVENIMENTELOR</button>
+                </div>
+                
+                <div class="tabel parteneri">
+                    <h3 class="table-title">Tabela Parteneri</h3>
+                    <table>
+                        <tr>
+                            <td>id_partener</td>
+                            <td>nume_partener</td>
+                        </tr>
+                        {% for part in parteneri %}
+                        <tr>
+                            <td>{{ part["id_partener"] }}</td>
+                            <td>{{ part["nume_partener"] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function onVoluntari() {
+                var tabele = document.getElementsByClassName("tabel");
+                Array.from(tabele).forEach(element => {
+                    element.style.display = "none";
+                });
+
+                var x = document.getElementsByClassName("voluntari");
+                x[0].style.display = "block";
+            }
+
+            function onAlumni() {
+                var tabele = document.getElementsByClassName("tabel");
+                Array.from(tabele).forEach(element => {
+                    element.style.display = "none";
+                });
+
+                var x = document.getElementsByClassName("alumni");
+                x[0].style.display = "block";
+            }
+
+            function onDept() {
+                var tabele = document.getElementsByClassName("tabel");
+                Array.from(tabele).forEach(element => {
+                    element.style.display = "none";
+                });
+
+                var x = document.getElementsByClassName("departamente");
+                x[0].style.display = "block";
+            }
+
+            function onRoluri() {
+                var tabele = document.getElementsByClassName("tabel");
+                Array.from(tabele).forEach(element => {
+                    element.style.display = "none";
+                });
+
+                var x = document.getElementsByClassName("roluri");
+                x[0].style.display = "block";
+            }
+
+            function onEvent() {
+                var tabele = document.getElementsByClassName("tabel");
+                Array.from(tabele).forEach(element => {
+                    element.style.display = "none";
+                });
+
+                var x = document.getElementsByClassName("evenimente");
+                x[0].style.display = "block";
+            }
+
+            function onParteneri() {
+                var tabele = document.getElementsByClassName("tabel");
+                Array.from(tabele).forEach(element => {
+                    element.style.display = "none";
+                });
+
+                var x = document.getElementsByClassName("parteneri");
+                x[0].style.display = "block";
+            }
+
+            function clearBench() {
+                var tabele = document.getElementsByClassName("tabel");
+                Array.from(tabele).forEach(element => {
+                    element.style.display = "none";
+                });
+            }
+        
+            function onDetalii() {
+                var details = document.getElementsByClassName("temp");
+                Array.from(details).forEach(element => {
+                    element.style.display = element.style.display == "block" ? "none" : "block";
+                })
+            }
+
+            function onSponsori() {
+                var details = document.getElementsByClassName("temp2");
+                Array.from(details).forEach(element => {
+                    element.style.display = element.style.display == "revert" ? "none" : "revert";
+                })
+            }
+        </script>
+    </body>
+</html>

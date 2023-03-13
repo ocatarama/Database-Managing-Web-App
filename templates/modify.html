@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>BD | Modifica o tabela</title>
+        <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+        <style>
+            :root {
+                --color-charcoal:#122620;
+                --color-cream: #F4EBD0;
+                --color-tan: #B68D40;
+                --color-gold: #D6AD60;
+            }
+
+            html, body {
+                margin: 0;
+                padding: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: var(--color-charcoal);
+                color: var(--color-gold);
+                /* font-family: Helvetica, "Trebuchet MS", Verdana, sans-serif; */
+                font-family: 'Courier New', monospace;
+                overflow: hidden;
+                display: flex;
+            }
+            
+            .left {
+                flex: 1;
+                width: max-content;
+                height: 100%;
+                border-right: 3px solid var(--color-gold);
+            }
+
+            .left .credits {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                margin-bottom: 10px;
+            }
+            
+            .left .credits p{
+                margin: 0;
+                padding: 0;
+                width: 290px;
+            }
+            
+            .right {
+                flex: 4;
+                overflow-y: scroll;
+            }
+
+            .title {
+                color: var(--color-gold);
+                width: 40vw;
+                margin: 0 auto;
+                text-align: center;
+                font-size: 35px;
+                padding-top:50px;
+            }
+
+            .subtitle {
+                color: var(--color-tan);
+                width: 30vw;
+                margin: 0 auto;
+                text-align: center;
+                font-size: 24px;
+                padding-top: 30px;
+                padding-bottom: 50px;
+            }
+
+            .menu {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .menu .menu-btn {
+                background-color: transparent;
+                border: none;
+                border-bottom: 2px solid var(--color-gold);
+                color: var(--color-gold);
+                width: 100%;
+                padding: 10px 0;
+                font-weight: bold;
+                font-family: 'Courier New', monospace;
+            }
+
+            .menu .menu-btn:hover {
+                cursor: pointer;
+                background-color: var(--color-gold);
+                color: var(--color-charcoal);
+            }
+
+            .form-container {
+                display: none;
+            }
+
+            .form-group {
+                display: flex;
+                justify-content: left;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+
+            form {
+                padding-left:25%;
+            }
+
+            select {
+                margin: 10px 0;
+            }
+
+            .form-dummy {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="left">
+            <div class="menu">
+                <a href="{{ rootPath }}"><button class="menu-btn">Inapoi la masa de lucru</button></a>
+                <a href="{{ rootPath + '/add' }}"><button class="menu-btn">Adauga intr-o tabela</button></a>
+                <a href="{{ rootPath + '/delete' }}"><button class="menu-btn">Sterge dintr-o tabela</button></a>
+                <a href="{{ rootPath + '/modify' }}"><button class="menu-btn">Modifica o tabela</button></a>
+            </div>
+            <div class="credits">
+                <p><b>Student:</b> Ovidiu CĂTĂRAMĂ</p>
+                <p><b>Grupa:</b> 1306A</p>
+                <p><b>Profesor:</b> Cătălin MIRONEANU</p>
+                <p><b>@Facultatea de Automatică şi Calculatoare Iaşi</b></p>
+            </div>
+        </div>
+
+        <div class="right">
+            <h2 class="title">Baza de date a unei asociatii de voluntariat</h2>
+            <h4 class="subtitle">Modifica o tabela</h4>
+            <div class="container">
+                <form method="POST" action="/modify" id="myForm">
+                    <div class="form-group">
+                        <label for="selectTable">Alege tabela: </label>
+                        <select name="selectTable" id="selectTable">
+                            <option value="0">Alege o tabela</option>
+                            <option value="1">Voluntari</option>
+                            <option value="2">Voluntari Alumni</option>
+                            <option value="3">Departamente</option>
+                            <option value="4">Roluri</option>
+                            <option value="5">Evenimente</option>
+                            <option value="6">Parteneri</option>
+                        </select>
+                    </div>
+
+                    <div class="form-container voluntari">
+                        <div class="form-group">
+                            <label for="selectRow">Alege inregistrarea: </label>
+                            <select name="selectRow" id="selectRow">
+                                <option value ="0">Alege o inregistrare</option>
+                                {% for vol in voluntari %}
+                                    <option value="{{ vol['id_voluntar'] }}">{{ vol['id_voluntar'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <input class="form-check" type="checkbox" value="1">Nume
+                            <input class="form-dummy" type="text" name="vol.nume" placeholder="Nume" id="1">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-check" type="checkbox" value="2" >Data Aderare
+                            <input class="form-dummy" type="text" name="vol.aderare" placeholder="ex. 01-JAN-2000" id="2">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-check" type="checkbox" value="3" >Rol
+                            <select class="form-dummy" name="vol.rol" id="3">
+                                <option value="0">Alege rolul</option>
+                                {% for rol in roluri %}
+                                    {%if (rol["denumire_rol"] != "Voluntar Alumni")%} 
+                                        <option value='{{ rol["id_rol"] }}'> {{rol["denumire_rol"] }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+
+                        </div>
+                        <div class="form-group">
+                            <input class="form-check" type="checkbox" value="4" >Departament
+                            <select class="form-dummy" name="vol.dep" id="4">
+                                <option value="0">Alege departamentul</option>
+                                {% for dep in departamente %}
+                                    <option value='{{ dep["id_departament"] }}'> {{ dep["nume_departament"] }}</option>
+                                {% endfor %}    
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input class="form-check" type="checkbox" value="5" >Telefon
+                            <input class="form-dummy" type="text" name="vol.telefon" placeholder="telefon" id="5">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-check" type="checkbox" value="6" >Email
+                            <input class="form-dummy" type="text" name="vol.email" placeholder="email" id="6">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-check" type="checkbox" value="7" Data Nastere>Data Nasterii
+                            <input class="form-dummy" type="text" name="vol.nastere" placeholder="ex. 01-JAN-2000" id="7">
+                        </div>
+                    </div>
+
+                    <div class="form-container voluntariAlumni">
+                        <div class="form-group">
+                            <label for="selectRowAlumni">Alege inregistrarea: </label>
+                            <select name="selectRowAlumni" id="selectRowAlumni">
+                                <option value ="0">Alege o inregistrare</option>
+                                {% for vol in voluntariAlumni %}
+                                    <option value="{{ vol['id_voluntar'] }}">{{ vol['id_voluntar'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <input class="form-check" type="checkbox" value="8">Nume
+                            <input class="form-dummy" type="text" name="vol.nume" placeholder="Nume" id="8">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-check" type="checkbox" value="9" >Data Aderare
+                            <input class="form-dummy" type="text" name="vol.aderare" placeholder="ex. 01-JAN-2000" id="9">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-check" type="checkbox" value="10" >Data Alumnizare
+                            <input class="form-dummy" type="text" name="vol.alumnizare" placeholder="ex. 01-JAN-2000" id="10">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-check" type="checkbox" value="11" >Telefon
+                            <input class="form-dummy" type="text" name="vol.telefon" placeholder="telefon" id="11">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-check" type="checkbox" value="12" >Email
+                            <input class="form-dummy" type="text" name="vol.email" placeholder="email" id="12">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-check" type="checkbox" value="13" Data Nastere>Data Nasterii
+                            <input class="form-dummy" type="text" name="vol.nastere" placeholder="ex. 01-JAN-2000" id="13">
+                        </div>
+                    </div>
+
+                    <div class="form-container departamente">
+                        <div class="form-group">
+                            <label for="selectRowDep">Alege inregistrarea: </label>
+                            <select name="selectRowDep" id="selectRowDep">
+                                <option value ="0">Alege o inregistrare</option>
+                                {% for dep in departamente %}
+                                    <option value="{{ dep['id_departament'] }}">{{ dep['id_departament'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dep.nume">Numele departamentului: </label>
+                            <input name="dep.nume" type="text" class="form-input" id="14">
+                        </div>
+                    </div>
+
+                    <div class="form-container roluri">
+                        <div class="form-group">
+                            <label for="selectRowDep">Alege inregistrarea: </label>
+                            <select name="selectRowRol" id="selectRowRol">
+                                <option value ="0">Alege o inregistrare</option>
+                                {% for rol in roluri %}
+                                    <option value="{{ rol['id_rol'] }}">{{ rol['id_rol'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rol.nume">Denumirea rolului: </label>
+                            <input name="rol.nume" type="text" class="form-input" id="15">
+                        </div>
+                    </div>
+
+                    <div class="form-container evenimente">
+                        <div class="form-group">
+                            <label for="selectRowDep">Alege inregistrarea: </label>
+                            <select name="selectRowEvent" id="selectRowEvent">
+                                <option value ="0">Alege o inregistrare</option>
+                                {% for event in evenimente %}
+                                    <option value="{{ event['id_event'] }}">{{ event['id_event'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <input class="form-check"  type="checkbox" value="16">Denumirea evenimentului: 
+                            <input name="ev.nume" type="text" class="form-dummy" id="16">
+                        </div>
+
+                        <div class="form-group">
+                            <input class="form-check" type="checkbox" value="17"> Data start:
+                            <input name="ev.start" type="text" class="form-dummy" id="17" placeholder="ex. 01-JAN-2000">
+                        </div>
+
+                        <div class="form-group">
+                            <input class="form-check" type="checkbox" value="18">Data stop:
+                            <input name="ev.stop" type="text" class="form-dummy" id="18" placeholder="ex. 01-JAN-2000">
+                        </div>
+
+                        <div class="form-group">
+                            <input class="form-check" type="checkbox" value="19"> Locatia evenimentului:
+                            <input name="ev.locatie" type="text" class="form-dummy" id="19">
+                        </div>
+                    </div>
+
+                    <div class="form-container parteneri">
+                        <div class="form-group">
+                            <label for="selectRowDep">Alege inregistrarea: </label>
+                            <select name="selectRowP" id="selectRowP">
+                                <option value ="0">Alege o inregistrare</option>
+                                {% for p in parteneri %}
+                                    <option value="{{ p['id_partener'] }}">{{ p['id_partener'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="p.nume">Denumirea partenerului: </label>
+                            <input name="p.nume" type="text" class="form-input" id="20">
+                        </div>
+                    </div>
+
+                    <input type="hidden" value="none" name="stringN" id="stringN">
+                    <input type="hidden" value="none" name="detalii" id="detalii">
+
+                    <button type="button" id="submitBtn">Modifica</button>
+                </form>
+            </div>
+        </div>
+
+
+
+        <script>
+            var x = document.getElementById("selectTable");
+            var tableName = ""
+
+            x.addEventListener("change", () => {
+                var forms = document.getElementsByClassName("form-container");
+
+                Array.from(forms).forEach(element => {element.style.display = "none"});
+
+                if(x.value!= 0)
+                    forms[x.value-1].style.display = "block";
+
+                switch(parseInt(x.value)) {
+                    case 1:
+                        tableName = "Voluntari";
+                        break;
+                    case 2:
+                        tableName = "Voluntari_Alumni";
+                        break;
+                    case 3:
+                        tableName = "Departamente";
+                        break;
+                    case 4:
+                        tableName = "Roluri";
+                        break;
+                    case 5:
+                        tableName = "Evenimente";
+                        break;
+                    case 6:
+                        tableName = "Parteneri";
+                        break;
+                    default:
+                        tableName = "";
+                        break;
+                }
+                console.log(tableName);
+            });
+
+            var y = document.getElementsByClassName("form-check")
+            Array.from(y).forEach(element => {
+                element.addEventListener("change", () => {
+                    if(element.checked)
+                    {
+                        document.getElementById(element.value).style.display = "block";
+                    }
+                    else
+                    {
+                        document.getElementById(element.value).style.display = "none";
+                        document.getElementById(element.value).value = "";
+                    }
+                });
+            });
+
+            var z = document.getElementById("submitBtn");
+            z.addEventListener("click", () => {
+                string = "UPDATE " + tableName + " SET ";
+                count = 0;
+                detalii = "UPDATE detalii_vol SET ";
+                countD = 0;
+
+                switch(parseInt(x.value)) {
+                    case 1:
+                        if(document.getElementById("1").value != "")
+                            if(count == 0) {
+                                string = string + "nume = '" + document.getElementById("1").value + "'";
+                                count++;
+                            }
+                            else {
+                                string = string + ", nume = '" + document.getElementById("1").value + "'";
+                                count++;
+                            }
+                        if(document.getElementById("2").value != "")
+                            if(count == 0) {
+                                string = string + "data_aderare = '" + document.getElementById("2").value + "'";
+                                count++;
+                            }
+                            else {
+                                string = string + ", data_aderare = '" + document.getElementById("2").value + "'";
+                                count++;
+                            }
+                        if(document.getElementById("3").value != 0)
+                            if(count == 0) {
+                                string = string + "id_rol = " + document.getElementById("3").value;
+                                count++;
+                            }
+                            else {
+                                string = string + ", id_rol = " + document.getElementById("3").value;
+                                count++;
+                            }
+                        if(document.getElementById("4").value != 0)
+                            if(count == 0) {
+                                string = string + "id_departament = " + document.getElementById("4").value;
+                                count++;
+                            }
+                            else {
+                                string = string + ", id_departament = " + document.getElementById("4").value;
+                                count++;
+                            }
+                        if(document.getElementById("5").value != "")
+                            if(countD == 0) {
+                                detalii = detalii + "numar_telefon = '" + document.getElementById("5").value + "'";
+                                countD++;
+                            }
+                            else {
+                                detalii = detalii + ", numar_telefon = '" + document.getElementById("5").value + "'";
+                                countD++;
+                            }
+                        if(document.getElementById("6").value != "")
+                            if(countD == 0) {
+                                detalii = detalii  + "email = '" + document.getElementById("6").value + "'";
+                                countD++;
+                            }
+                            else {
+                                detalii = detalii + ", email = '" + document.getElementById("6").value; + "'";
+                                countD++;
+                            }
+                        if(document.getElementById("7").value != "")
+                            if(countD == 0) {
+                                detalii = detalii + "data_nastere = '" + document.getElementById("7").value + "'";
+                                countD++;
+                            }
+                            else {
+                                detalii = detalii + ", data_nastere = '" + document.getElementById("7").value + "'";
+                                countD++;
+                            }
+                        
+                        string = string + " where id_voluntar in " + document.getElementById("selectRow").value;
+                        detalii = detalii + " where id_voluntar in " + document.getElementById("selectRow").value;
+                        document.getElementById("detalii").value = detalii;
+                        document.getElementById("stringN").value = string;
+                        break;
+                    case 2:
+                        if(document.getElementById("8").value != "")
+                            if(count == 0) {
+                                string = string + "nume = '" + document.getElementById("8").value + "'";
+                                count++;
+                            }
+                            else {
+                                string = string + ", nume = '" + document.getElementById("8").value + "'";
+                                count++;
+                            }
+                        if(document.getElementById("9").value != "")
+                            if(count == 0) {
+                                string = string + "data_aderare = '" + document.getElementById("9").value + "'";
+                                count++;
+                            }
+                            else {
+                                string = string + ", data_aderare = '" + document.getElementById("9").value + "'";
+                                count++;
+                            }
+                        if(document.getElementById("10").value != "")
+                            if(count == 0) {
+                                string = string + "data_alumnizare = '" + document.getElementById("10").value + "'";
+                                count++;
+                            }
+                            else {
+                                string = string + ", data_alumnizare = '" + document.getElementById("10").value + "'";
+                                count++;
+                            }
+                        if(document.getElementById("11").value != "")
+                            if(count == 0) {
+                                string = string + "numar_telefon = '" + document.getElementById("11").value + "'";
+                                count++;
+                            }
+                            else {
+                                string = string + ", numar_telefon = '" + document.getElementById("11").value + "'";
+                                count++;
+                            }
+                        if(document.getElementById("12").value != "")
+                            if(count == 0) {
+                                string = string  + "email = '" + document.getElementById("12").value + "'";
+                                count++;
+                            }
+                            else {
+                                string = string + ", email = '" + document.getElementById("12").value; + "'";
+                                count++;
+                            }
+                        if(document.getElementById("13").value != "")
+                            if(count == 0) {
+                                string = string + "data_nastere = '" + document.getElementById("13").value + "'";
+                                count++;
+                            }
+                            else {
+                                string = string + ", data_nastere = '" + document.getElementById("13").value + "'";
+                                count++;
+                            }
+                        
+                        string = string + " where id_voluntar in " + document.getElementById("selectRowAlumni").value;
+                        document.getElementById("stringN").value = string;
+                        break;
+                    case 3:
+                        if(document.getElementById("14").value != "")
+                        {
+                            string = string + "nume_departament = '" + document.getElementById("14").value + "'";
+                            string = string + " where id_departament = " + document.getElementById("selectRowDep").value;
+                            document.getElementById("stringN").value = string;
+                        }
+                        break;
+                    case 4:
+                        if(document.getElementById("15").value != "")
+                        {
+                            string = string + "denumire_rol = '" + document.getElementById("15").value + "'";
+                            string = string + " where id_rol = " + document.getElementById("selectRowRol").value;
+                            document.getElementById("stringN").value = string;
+                        }
+                        break;
+                    case 5:
+                        if(document.getElementById("16").value != "")
+                            if(count == 0) {
+                                string = string + "nume_event = '" + document.getElementById("16").value + "'";
+                                count++;
+                            }
+                            else {
+                                string = string + ", nume_event = '" + document.getElementById("16").value + "'";
+                                count++;
+                            }
+                        if(document.getElementById("17").value != "")
+                            if(count == 0) {
+                                string = string + "data_start = '" + document.getElementById("17").value + "'";
+                                count++;
+                            }
+                            else {
+                                string = string + ", data_start = '" + document.getElementById("17").value + "'";
+                                count++;
+                            }
+                        if(document.getElementById("18").value != "")
+                            if(count == 0) {
+                                string = string + "data_stop = '" + document.getElementById("18").value + "'";
+                                count++;
+                            }
+                            else {
+                                string = string + ", data_stop = '" + document.getElementById("18").value + "'";
+                                count++;
+                            }
+                        if(document.getElementById("19").value != "")
+                            if(count == 0) {
+                                string = string + "locatie_event = '" + document.getElementById("19").value + "'";
+                                count++;
+                            }
+                            else {
+                                string = string + ", locatie_event = '" + document.getElementById("19").value + "'";
+                                count++;
+                            }
+
+                        string = string + " where id_event = " + document.getElementById("selectRowEvent").value;
+                        document.getElementById("stringN").value = string;
+                        break;
+                    case 6:
+                        if(document.getElementById("20").value != "")
+                        {
+                            string = string + "nume_partener = '" + document.getElementById("20").value + "'";
+                            string = string + " where id_partener = " + document.getElementById("selectRowP").value;
+                            document.getElementById("stringN").value = string;
+                        }
+                        break;
+                    default:
+                        tableName = "";
+                        break;
+                }                
+
+                console.log(string);
+                document.getElementById("myForm").submit();
+            });
+        </script>
+    </body>
+</html>
