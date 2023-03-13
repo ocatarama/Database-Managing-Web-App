@@ -11,7 +11,7 @@ cx_Oracle.init_oracle_client(lib_dir=r"D:\instantclient_21_8")
 
 app = Flask(__name__)
 
-con = cx_Oracle.connect("bd004", "bd004", "bd-dc.cs.tuiasi.ro:1539/orcl")
+con = cx_Oracle.connect("user", "pass", "host")
 
 voluntari = []
 detalii = []
